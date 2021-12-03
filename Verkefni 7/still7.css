@@ -1,0 +1,167 @@
+body{
+    margin: 0 auto;
+    background-image: url("fire.jpg");
+}
+img{
+    max-width: 100%;
+    height: auto;
+}
+.ord1{
+    font-weight: bold;
+    color: blue;
+    background-image: url("lava.jpg");;
+    text-shadow:
+    3px  3px 0 black,
+   -1px -1px 0 black,  
+    1px -1px 0 black,
+   -1px  1px 0 gray,
+    1px  1px 0 gray;
+}
+.ord2{
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 
+    3px  3px 0 red,
+   -1px -1px 0 red,  
+    1px -1px 0 red,
+   -1px  1px 0 orange,
+    1px  1px 0 orange;
+}
+.linkar{
+    display: grid;
+    grid-template-columns: 1fr;
+    background-image: url("lava.jpg");
+}
+.linkur2{
+    color: blue;
+    text-decoration: none;
+}
+.ord3{
+    color: white;
+    text-decoration: none;
+    padding-left: 100px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 200px;
+}
+.ord3:hover{
+    color: blue;
+    font-weight: bold;
+    background-image: url("fire.jpg");
+}
+.texti{
+    padding-top: 100px;
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+}
+.dalkar1{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+.video{
+    padding-top: 100px;
+}
+.pila{
+    color: blue;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    background-color: white;
+    width: 70px;
+    height: 70px;
+    font-size: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.pila:hover{
+    color: white;
+    background-color: blue;
+}
+.dalkur2{
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 10px;
+}
+.midja{
+    width: 70%;
+    margin: 0 auto;
+    color: white;
+    font-weight: bold;
+}
+a:hover{
+    color: red;
+    text-decoration: none;
+}
+nav li{
+    list-style-type: none;
+}
+.upptaka{
+    color: white;
+    font-weight: bold;
+}
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
+.still1{
+    font-family: 'Cookie', cursive;
+}
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+.still2{
+    font-family: 'Courgette', cursive;
+}
+@media screen and (min-width:600px) {
+    .dalkar1{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .linkar{
+        display: grid;
+        grid-template-columns: 1fr;
+        background-image: url("lava.jpg");
+    }
+    .ord3{
+        color: white;
+        text-decoration: none;
+        padding-left: 100px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 520px;
+    }
+    .dalkur2{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 10px;
+    }
+}
+@media screen and (min-width:1280px) {
+    .dalkar1{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .linkar{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+    .ord3{
+        color: white;
+        text-decoration: none;
+        padding-left: 100px;
+        background-image: url("lava.jpg");
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .ord3:hover{
+        color: blue;
+        font-weight: bold;
+        background-image: url("lava.jpg");
+    }
+    .dalkur2{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 10px;
+    }
+}
