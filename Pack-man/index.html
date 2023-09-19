@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pack-Man</title>
+    <link rel="stylesheet" href="verk_3.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        "use strict";
+const canvas = document.querySelector("#gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const width = canvas.width = window.innerWidth - 3;
+const height = canvas.height = window.innerHeight - 4;
+
+const angle = Math.PI / 180;
+
+const KEY_W = 87;
+const KEY_S = 83;
+const KEY_D = 68;
+const KEY_A = 65;
+
+const KEY_arrowUp = 38;
+const KEY_arrowDown = 40;
+const KEY_arrowLeft = 37;
+const KEY_arrowRight = 39;
+
+
+let touchStartX = null;
+let touchStartY = null;
+let touchEndX = null;
+let touchEndY = null;
+
+canvas.addEventListener("touchstart", function (event) {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+});
+
+canvas.addEventListener("touchend", function (event) {
+  if (touchStartX !== null && touchStartY !== null) {
+    touchEndX = event.changedTouches[0].clientX;
+    touchEndY = event.changedTouches[0].clientY;
+    
+    handleTouchInput();
+    
+    touchStartX = null;
+    touchStartY = null;
+    touchEndX = null;
+    touchEndY = null;
+  }
+});
+
+function handleTouchInput() {
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 0) {
+      pack_madur.velX = 4;
+      pack_madur.velY = 0;
+    } else {
+      pack_madur.velX = -4;
+      pack_madur.velY = 0;
+    }
+  } else {
+    if (deltaY > 0) {
+      pack_madur.velX = 0;
+      pack_madur.velY = 4;
+    } else {
+      pack_madur.velX = 0;
+      pack_madur.velY = -4;
+    }
+  }
+}
+
+document.addEventListener("keydown", function (event) {
+  switch (event.keyCode) {
+    case KEY_W:
+      pack_madur.velY = -4;
+      break;
+    case KEY_S:
+      pack_madur.velY = 4;
+      break;
+    case KEY_A:
+      pack_madur.velX = -4;
+      break;
+    case KEY_D:
+      pack_madur.velX = 4;
+      break;
+    case KEY_arrowUp:
+      pack_madur.velY = -4;
+      break;
+    case KEY_arrowDown:
+      pack_madur.velY = 4;
+      break;
+    case KEY_arrowLeft:
+      pack_madur.velX = -4;
+      break;
+    case KEY_arrowRight:
+      pack_madur.velX = 4;
+      break;
+  }
+
+  if (event.keyCode === KEY_W && event.keyCode === KEY_D) {
+    pack_madur.velX = 4;
+    pack_madur.velY = -4;
+  } else if (event.keyCode === KEY_W && event.keyCode === KEY_A) {
+    pack_madur.velX = -4;
+    pack_madur.velY = -4;
+  } else if (event.keyCode === KEY_S && event.keyCode === KEY_D) {
+    pack_madur.velX = 4;
+    pack_madur.velY = 4;
+  } else if (event.keyCode === KEY_S && event.keyCode === KEY_A) {
+    pack_madur.velX = -4;
+    pack_madur.velY = 4;
+  }
+});
+
+document.addEventListener("keyup", function (event) {
+  switch (event.keyCode) {
+    case KEY_W:
+      pack_madur.velY = 0;
+      break;
+    case KEY_S:
+      pack_madur.velY = 0;
+      break;
+    case KEY_A:
+      pack_madur.velX = 0;
+      break;
+    case KEY_D:
+      pack_madur.velX = 0;
+      break;
+    case KEY_arrowUp:
+      pack_madur.velY = 0;
+      break;
+    case KEY_arrowDown:
+      pack_madur.velY = 0;
+      break;
+    case KEY_arrowLeft:
+      pack_madur.velX = 0;
+      break;
+    case KEY_arrowRight:
+      pack_madur.velX = 0;
+      break;
+  }
+});
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
+  function velos() {
+    let vel = 0;
+    vel = random(-7, 7);
+    if (vel === 0) {
+      vel = 1;
+    }
+    return vel;
+  }
+
+  function toggleGhostVisibility() {
+    for (const ghost of ghosts) {
+      ghost.isVisible = !ghost.isVisible;
+    }
+  }
+  
+  function handlePowerPelletEaten() {
+    toggleGhostVisibility();
+    setTimeout(() => {
+      toggleGhostVisibility();
+    }, 5000);
+  }
+
+  function activateGhostVulnerability() {
+    console.log("Going for the kill")
+    for (const ghost of ghosts) {
+      ghost.isVulnerable = true;
+    }
+
+    handlePowerPelletEaten();
+  
+    setTimeout(() => {
+      for (const ghost of ghosts) {
+        ghost.isVulnerable = false;
+      }
+    }, 5000);
+  }
+
+  class Ghosts {
+    constructor(x, y, velX, velY, color, size) {
+      this.x = x;
+      this.y = y;
+      this.velX = velX;
+      this.velY = velY;
+      this.color = color;
+      this.size = size;
+      this.isVulnerable = false;
+      this.isLive = true;
+      this.isVisible = true;
+    }
+    draw() {
+      if (this.isVisible) {
+        ctx.beginPath();
+        if (this.isVulnerable) {
+          ctx.fillStyle = "blue"
+        }
+        else {
+        ctx.fillStyle = this.color;
+        }
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      }
+      update() {
+        if ((this.x + this.size) >= width) {
+          this.velX = -(this.velX);
+        }
+      
+        if ((this.x - this.size) <= 0) {
+          this.velX = -(this.velX);
+        }
+      
+        if ((this.y + this.size) >= height) {
+          this.velY = -(this.velY);
+        }
+      
+        if ((this.y - this.size) <= 0) {
+          this.velY = -(this.velY);
+        }
+      
+        this.x += this.velX;
+        this.y += this.velY;
+      }
+      collisionDetect() {
+        for (const ghost of ghosts) {
+          if (this !== ghost && ghost.isLive === true) {
+            const dx = this.x - ghost.x;
+            const dy = this.y - ghost.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+      
+            if (distance < this.size + ghost.size) {
+              ghost.velX = -ghost.velX;
+              ghost.velY = -ghost.velY;
+              this.velX = -this.velX;
+              this.velY = -this.velY;
+            }
+          }
+          else if (this !== pack_madur && ghost.isLive === true) {
+            const dx = this.x - pack_madur.x;
+            const dy = this.y - pack_madur.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+    
+            if (distance < this.size + ghost.size) {
+              if (!pack_madur.isInvincible) {
+                if (ghost.isVulnerable) {
+                  ghost.isLive = false;
+                } else {
+                pack_madur.pack_man_lif -= 1;
+                pack_madur.activateInvincibility();
+              }
+            }
+          }
+        }
+      }
+  }
+  }
+  class Pack_Man {
+    constructor(x, y, velX, velY, size, pack_man_lif) {
+      this.x = x;
+      this.y = y;
+      this.velX = velX;
+      this.velY = velY;
+      this.size = size;
+      this.pack_man_lif = pack_man_lif;
+      this.isInvincible = false;
+      this.invincibilityTimer = null;
+      this.pack_score = 0;
+
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.strokeStyle = "Yellow";
+      
+      const angle = Math.atan2(this.velY, this.velX);
+  
+      const mouthX1 = this.x + this.size * Math.cos(angle - Math.PI / 4);
+      const mouthY1 = this.y + this.size * Math.sin(angle - Math.PI / 4);
+      const mouthX2 = this.x + this.size * Math.cos(angle + Math.PI / 4);
+      const mouthY2 = this.y + this.size * Math.sin(angle + Math.PI / 4);
+  
+      ctx.arc(this.x, this.y, this.size, angle + Math.PI / 4, angle - Math.PI / 4, false);
+      ctx.lineTo(this.x, this.y);
+      ctx.fillStyle = "yellow";
+      ctx.fill();
+      ctx.closePath();
+  
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(mouthX1, mouthY1);
+      ctx.lineTo(mouthX2, mouthY2);
+      ctx.fillStyle = "black";
+      ctx.fill();
+      ctx.closePath();
+    }
+      update() {
+        if ((this.x + this.size) >= width) {
+          this.x = width - 30;
+        }
+      
+        if ((this.x - this.size) <= 0) {
+          this.x = 30;
+        }
+      
+        if ((this.y + this.size) >= height) {
+          this.y = height - 30;
+        }
+      
+        if ((this.y - this.size) <= 0) {
+          this.y = 30;
+        }
+      
+        this.x += this.velX;
+        this.y += this.velY;
+      }
+    activateInvincibility() {
+      if (!this.isInvincible) {
+        this.isInvincible = true;
+        clearTimeout(this.invincibilityTimer);
+        this.invincibilityTimer = setTimeout(() => {
+          this.isInvincible = false;
+        }, 2000);
+      }
+    }
+  }
+  class Power_Pellets {
+    constructor(x, y, size, erLif) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.erLif = erLif;
+      this.isVisible = true;
+    }
+    draw() {
+      if (this.isVisible) {
+        ctx.beginPath();
+        ctx.fillStyle = "yellow";
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      }
+      collisionDetect() {
+        for (const pallet of pallets) {
+          if (this !== pack_madur) {
+            const dx = this.x - pack_madur.x;
+            const dy = this.y - pack_madur.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+      
+            if (distance < this.size + pallet.size) {
+              this.erLif = false;
+              activateGhostVulnerability();
+            }
+          }
+        }
+      }
+  }
+
+  class PacManDot {
+    constructor(x, y, size) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.isVisible = true;
+    }
+  
+    draw() {
+      if (this.isVisible) {
+        ctx.beginPath();
+        ctx.fillStyle = "yellow";
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+  
+    collisionDetect() {
+      if (this.isVisible) {
+        const dx = this.x - pack_madur.x;
+        const dy = this.y - pack_madur.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+  
+        if (distance < this.size + pack_madur.size) {
+          pack_madur.pack_score += 1;
+          this.isVisible = false;
+        }
+      }
+    }
+  }
+
+  const pallets = [];
+  const ghosts = [];
+  const pacManDots = [];
+
+for (let i = 0; i < 50; i++) {
+  const dot = new PacManDot(random(10, width), random(10, height), 5);
+  pacManDots.push(dot);
+}
+
+  const power_Pellet_1 = new Power_Pellets(30, 30, 10, true);
+
+  pallets.push(power_Pellet_1)
+
+  const power_Pellet_2 = new Power_Pellets(30, height-30, 10, true);
+
+  pallets.push(power_Pellet_2)
+
+  const power_Pellet_3 = new Power_Pellets(width-30, height-(height-30), 10, true);
+
+  pallets.push(power_Pellet_3)
+
+  const power_Pellet_4 = new Power_Pellets(width-30, height-30, 10, true);
+
+  pallets.push(power_Pellet_4)
+
+
+  const pack_madur = new Pack_Man(40, 40, 0, 0, 20, 3);
+
+const size = random(10, 20)
+
+  const blinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "red", 15);
+
+  ghosts.push(blinky)
+
+  const pinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "pink", 15);
+
+  ghosts.push(pinky)
+
+  const inky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "cyan", 15);
+
+  ghosts.push(inky)
+
+  const clyde = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "orange", 15);
+
+  ghosts.push(clyde)
+  function togglePowerPelletVisibility() {
+    for (const pellet of pallets) {
+      pellet.isVisible = !pellet.isVisible;
+    }
+  }
+  
+  setInterval(togglePowerPelletVisibility, 500);
+
+  function loop() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.fillRect(0, 0, width, height);
+  
+    for (const ghost of ghosts) {
+      if (ghost.isLive == true) {
+        ghost.update();
+        ghost.collisionDetect();
+        ghost.draw();
+      }
+    }
+
+    for (const pallet of pallets) {
+      if (pallet.erLif === true) {
+        pallet.draw();
+        pallet.collisionDetect();
+    }}
+  
+    for (const dot of pacManDots) {
+      if (dot.isVisible) {
+        dot.collisionDetect();
+        dot.draw();
+      }
+    }
+  
+    pack_madur.draw();
+    pack_madur.update();
+
+    ctx.fillStyle = 'white';
+    ctx.font = '24px Arial';
+    ctx.fillText('stig ' + pack_madur.pack_score, 10, 30);
+    ctx.fillText('líf ' + pack_madur.pack_man_lif, 90, 30);
+  
+    if (pack_madur.pack_score === 50 || pack_madur.pack_man_lif === 0) {
+      console.log("Game Over");
+    } else {
+      window.requestAnimationFrame(loop);
+    }
+  }
+
+  addEventListener("load", loop);
+    </script>
+</body>
+</html>
