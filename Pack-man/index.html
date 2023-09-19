@@ -485,9 +485,16 @@ const size = random(10, 20)
     ctx.fillText('Points ' + pack_madur.pack_score, 10, 30);
     ctx.fillText('Lifes ' + pack_madur.pack_man_lif, 120, 30);
   
-    if (pack_madur.pack_score === 50 || pack_madur.pack_man_lif === 0) {
-      console.log("Game Over");
-    } else {
+    if (pack_madur.pack_score === 50) {
+      ctx.fillStyle = 'yellow';
+      ctx.font = '40px Arial';
+      ctx.fillText('YOU WIN!!', width / 2, height / 2)
+    } else if (pack_madur.pack_man_lif === 0) {
+      ctx.fillStyle = 'red';
+      ctx.font = '40px Arial';
+      ctx.fillText('Game Over', width / 2, height / 2);
+    }
+    else {
       window.requestAnimationFrame(loop);
     }
   }
