@@ -176,6 +176,12 @@ function random(min, max) {
     }, 5000);
   }
 
+function over() {
+    setTimeout(() => {
+      location.reload();
+    }, 5000);
+  }
+
   function activateGhostVulnerability() {
     console.log("Going for the kill")
     for (const ghost of ghosts) {
@@ -491,10 +497,12 @@ const size = random(10, 20)
       ctx.fillStyle = 'yellow';
       ctx.font = '40px Arial';
       ctx.fillText('YOU WIN!!', width / 2, height / 2)
+      over();
     } else if (pack_madur.pack_man_lif === 0) {
       ctx.fillStyle = 'red';
       ctx.font = '40px Arial';
       ctx.fillText('Game Over', width / 2, height / 2);
+      over();
     }
     else {
       window.requestAnimationFrame(loop);
