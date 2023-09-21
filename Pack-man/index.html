@@ -197,7 +197,6 @@ function random(min, max) {
       }
     }, 5000);
   }
-
   class Ghosts {
     constructor(x, y, velX, velY, color, size) {
       this.x = x;
@@ -208,21 +207,55 @@ function random(min, max) {
       this.size = size;
       this.isVulnerable = false;
       this.isLive = true;
-      this.isVisible = true;
     }
     draw() {
-      if (this.isVisible) {
-        ctx.beginPath();
-        if (this.isVulnerable) {
-          ctx.fillStyle = "blue"
-        }
-        else {
-        ctx.fillStyle = this.color;
-        }
-        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-      }
+      let radius = this.size;
+  let feet = 4;
+  let head_radius = radius * 0.8;
+  let foot_radius = head_radius / feet;
+  ctx.save();
+  ctx.strokeStyle = "white";
+  if (this.isVulnerable) {
+    ctx.fillStyle = "blue";
+  } else {
+    ctx.fillStyle = this.color;
+  }
+  ctx.lineWidth = radius * 0.05;
+
+  for (let foot = 0; foot < feet; foot++) {
+    ctx.beginPath();
+    ctx.arc(
+      this.x - (2.5 * foot_radius * foot) + foot_radius + 8,
+      this.y + radius,
+      foot_radius, 0, Math.PI
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  ctx.arc(this.x, this.y, radius, Math.PI, 0, false);
+  ctx.lineTo(this.x + radius, this.y + radius);
+  ctx.lineTo(this.x - radius, this.y + radius);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(this.x - head_radius / 2.5, this.y - head_radius / 2, head_radius / 3, 0, 2 * Math.PI);
+  ctx.arc(this.x + head_radius / 3.5, this.y - head_radius / 2, head_radius / 3, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.arc(this.x - head_radius / 2, this.y - head_radius / 2.2, head_radius / 8, 0, 2 * Math.PI);
+  ctx.arc(this.x + head_radius / 4, this.y - head_radius / 2.2, head_radius / 8, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.restore();
+}
       update() {
         if ((this.x + this.size) >= width) {
           this.velX = -(this.velX);
@@ -491,8 +524,8 @@ const size = random(10, 20)
 
     ctx.fillStyle = 'white';
     ctx.font = '24px Arial';
-    ctx.fillText('Points ' + pack_madur.pack_score, 10, 30);
-    ctx.fillText('Lifes ' + pack_madur.pack_man_lif, 120, 30);
+    ctx.fillText('stig ' + pack_madur.pack_score, 10, 30);
+    ctx.fillText('líf ' + pack_madur.pack_man_lif, 90, 30);
   
     if (pack_madur.pack_score === 50) {
       ctx.fillStyle = 'yellow';
