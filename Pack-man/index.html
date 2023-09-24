@@ -30,7 +30,6 @@ const KEY_arrowDown = 40;
 const KEY_arrowLeft = 37;
 const KEY_arrowRight = 39;
 
-
 window.addEventListener("devicemotion", handleDeviceMotion);
 
 function handleDeviceMotion(event) {
@@ -156,6 +155,18 @@ function random(min, max) {
     }, 5000);
   }
 
+  function lockLandscapeOrientation() {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock("landscape-primary")
+        .then(() => {
+          console.log("Orientation locked to landscape.");
+        })
+        .catch((error) => {
+          console.error("Failed to lock orientation:", error);
+        });
+    }
+  }
+
   function over() {
     console.log("reloading in 5 sek");
     setTimeout(() => {
@@ -186,6 +197,12 @@ function random(min, max) {
       }
     }, 5000);
   }
+
+  function playSound(audio1) {
+    let audio2 = audio1.cloneNode();
+    audio2.play();
+  }
+
   class Ghosts {
     constructor(x, y, velX, velY, color, size) {
       this.x = x;
@@ -196,6 +213,8 @@ function random(min, max) {
       this.size = size;
       this.isVulnerable = false;
       this.isLive = true;
+      this.sound = new Audio();
+      this.sound.src = 'yoda-death.mp3';
     }
     draw() {
       let radius = this.size;
@@ -288,8 +307,11 @@ function random(min, max) {
               if (!pack_madur.isInvincible) {
                 if (ghost.isVulnerable) {
                   ghost.isLive = false;
+                  ghost.sound.play();
                 } else {
                 pack_madur.pack_man_lif -= 1;
+                pack_madur.sound.play();
+                window.navigator.vibrate(200);
                 pack_madur.activateInvincibility();
               }
             }
@@ -309,6 +331,8 @@ function random(min, max) {
       this.isInvincible = false;
       this.invincibilityTimer = null;
       this.pack_score = 0;
+      this.sound = new Audio();
+      this.sound.src = 'roblox-death.mp3';
 
     }
     draw() {
@@ -373,6 +397,8 @@ function random(min, max) {
       this.size = size;
       this.erLif = erLif;
       this.isVisible = true;
+      this.sound = new Audio();
+      this.sound.src = 'power-star.mp3';
     }
     draw() {
       if (this.isVisible) {
@@ -391,6 +417,10 @@ function random(min, max) {
       
             if (distance < this.size + pallet.size) {
               this.erLif = false;
+              this.sound.play();
+              setTimeout(() => {
+                this.sound.pause();
+              }, 5000);
               activateGhostVulnerability();
             }
           }
@@ -404,6 +434,8 @@ function random(min, max) {
       this.y = y;
       this.size = size;
       this.isVisible = true;
+      this.sound = new Audio;
+      this.sound.src = 'ding.mp3';
     }
   
     draw() {
@@ -424,6 +456,7 @@ function random(min, max) {
   
         if (distance < this.size + pack_madur.size) {
           pack_madur.pack_score += 1;
+          playSound(this.sound)
           this.isVisible = false;
         }
       }
@@ -577,11 +610,10 @@ function random(min, max) {
     init();
   })
 
-  window.addEventListener('fullscreenchange', function() {
-    screen.orientation.lock('landscape-primary')
-    });
-
-  addEventListener("load", loop);
+  window.addEventListener("load", () => {
+    lockLandscapeOrientation();
+    loop();
+  });
     </script>
 </body>
 </html>
