@@ -577,6 +577,10 @@ function random(min, max) {
     init();
   })
 
+  window.addEventListener('fullscreenchange', function() {
+    screen.orientation.lock('landscape-primary')
+    });
+
   addEventListener("load", loop);
     </script>
 </body>
