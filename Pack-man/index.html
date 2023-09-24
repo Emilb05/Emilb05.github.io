@@ -31,47 +31,27 @@ const KEY_arrowLeft = 37;
 const KEY_arrowRight = 39;
 
 
-let touchStartX = null;
-let touchStartY = null;
-let touchEndX = null;
-let touchEndY = null;
+window.addEventListener("devicemotion", handleDeviceMotion);
 
-canvas.addEventListener("touchstart", function (event) {
-  touchStartX = event.touches[0].clientX;
-  touchStartY = event.touches[0].clientY;
-});
+function handleDeviceMotion(event) {
+  const accelerationX = event.accelerationIncludingGravity.x;
+  const accelerationY = event.accelerationIncludingGravity.y;
 
-canvas.addEventListener("touchend", function (event) {
-  if (touchStartX !== null && touchStartY !== null) {
-    touchEndX = event.changedTouches[0].clientX;
-    touchEndY = event.changedTouches[0].clientY;
-    
-    handleTouchInput();
-    
-    touchStartX = null;
-    touchStartY = null;
-    touchEndX = null;
-    touchEndY = null;
-  }
-});
+  const sensitivity = 0.1;
 
-function handleTouchInput() {
-  const deltaX = touchEndX - touchStartX;
-  const deltaY = touchEndY - touchStartY;
-
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    if (deltaX > 0) {
+  if (Math.abs(accelerationX) > Math.abs(accelerationY)) {
+    if (accelerationX > sensitivity) {
       pack_madur.velX = 4;
       pack_madur.velY = 0;
-    } else {
+    } else if (accelerationX < -sensitivity) {
       pack_madur.velX = -4;
       pack_madur.velY = 0;
     }
   } else {
-    if (deltaY > 0) {
+    if (accelerationY > sensitivity) {
       pack_madur.velX = 0;
       pack_madur.velY = 4;
-    } else {
+    } else if (accelerationY < -sensitivity) {
       pack_madur.velX = 0;
       pack_madur.velY = -4;
     }
