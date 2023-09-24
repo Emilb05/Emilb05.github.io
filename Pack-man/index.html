@@ -155,18 +155,6 @@ function random(min, max) {
     }, 5000);
   }
 
-  function lockLandscapeOrientation() {
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock("landscape-primary")
-        .then(() => {
-          console.log("Orientation locked to landscape.");
-        })
-        .catch((error) => {
-          console.error("Failed to lock orientation:", error);
-        });
-    }
-  }
-
   function over() {
     console.log("reloading in 5 sek");
     setTimeout(() => {
@@ -610,9 +598,10 @@ function random(min, max) {
     init();
   })
 
-  window.addEventListener("load", () => {
-    lockLandscapeOrientation();
-    loop();
+  window.addEventListener("load", loop);
+
+  window.addEventListener('fullscreenchange',()=>{
+    screen.orientation.lock('landscape-primary')
   });
     </script>
 </body>
