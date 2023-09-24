@@ -15,8 +15,8 @@
 const canvas = document.querySelector("#gameCanvas");
 const ctx = canvas.getContext("2d");
 
-const width = canvas.width = window.innerWidth - 3;
-const height = canvas.height = window.innerHeight - 4;
+let width = canvas.width = window.innerWidth - 3;
+let height = canvas.height = window.innerHeight - 4;
 
 const angle = Math.PI / 180;
 
@@ -182,6 +182,15 @@ function random(min, max) {
       location.reload();
     }, 5000);
   }
+
+  function toggleFullScreen(){
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch(err => {
+        alert("Error, can't enable Full-screen mode")
+      });
+    }
+  }
+  window.addEventListener('click', toggleFullScreen);
 
   function activateGhostVulnerability() {
     console.log("Going for the kill")
@@ -441,57 +450,95 @@ function random(min, max) {
     }
   }
 
-  const pallets = [];
-  const ghosts = [];
-  const pacManDots = [];
+  let pallets = [];
+  let ghosts = [];
+  let pacManDots = [];
 
-for (let i = 0; i < 50; i++) {
-  const dot = new PacManDot(random(10, width), random(10, height), 5);
-  pacManDots.push(dot);
-}
+  for (let i = 0; i < 50; i++) {
+    const dot = new PacManDot(random(10, width), random(10, height), 5);
+    pacManDots.push(dot);
+  }
+  
+  
+    const pack_madur = new Pack_Man(40, 40, 0, 0, 20, 3);
+  
+  const size = random(10, 20)
+  
+    
 
-  const power_Pellet_1 = new Power_Pellets(30, 30, 10, true);
+  function init() {
+    pallets = [];
+    ghosts = [];
+    pacManDots = [];
+    const power_Pellet_1 = new Power_Pellets(30, 30, 10, true);
+  
+    const power_Pellet_2 = new Power_Pellets(30, height-30, 10, true);
+  
+    const power_Pellet_3 = new Power_Pellets(width-30, height-(height-30), 10, true);
+  
+    const power_Pellet_4 = new Power_Pellets(width-30, height-30, 10, true);
 
-  pallets.push(power_Pellet_1)
+    const blinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "red", 15);
+  
+  
+    const pinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "pink", 15);
+  
+  
+    const inky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "cyan", 15);
+  
+  
+    const clyde = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "orange", 15);
+  
 
-  const power_Pellet_2 = new Power_Pellets(30, height-30, 10, true);
+    if (pack_madur.pack_score === 0) {
+      for (let i = 0; i < 50; i++) {
+        const dot = new PacManDot(random(10, width), random(10, height), 5);
+        pacManDots.push(dot);
+      }
+    }
+    else {
+      let tala = 50 - pack_madur.pack_score;
+      for (let i = 0; i < tala; i++) {
+        const dot = new PacManDot(random(10, width), random(10, height), 5);
+        pacManDots.push(dot);
+      }
+    }
 
-  pallets.push(power_Pellet_2)
+    if (power_Pellet_1.erLif) {
+      pallets.push(power_Pellet_1)
+    }
+    if (power_Pellet_2.erLif) {
+      pallets.push(power_Pellet_2)
+    }
+    if (power_Pellet_3.erLif) {
+      pallets.push(power_Pellet_3)
+    }
+    if (power_Pellet_4.erLif) {
+      pallets.push(power_Pellet_4)
+    }
 
-  const power_Pellet_3 = new Power_Pellets(width-30, height-(height-30), 10, true);
-
-  pallets.push(power_Pellet_3)
-
-  const power_Pellet_4 = new Power_Pellets(width-30, height-30, 10, true);
-
-  pallets.push(power_Pellet_4)
-
-
-  const pack_madur = new Pack_Man(40, 40, 0, 0, 20, 3);
-
-const size = random(10, 20)
-
-  const blinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "red", 15);
-
-  ghosts.push(blinky)
-
-  const pinky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "pink", 15);
-
-  ghosts.push(pinky)
-
-  const inky = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "cyan", 15);
-
-  ghosts.push(inky)
-
-  const clyde = new Ghosts(random(0 + size, width - size), random(0 + size, height - size), velos(), velos(), "orange", 15);
-
-  ghosts.push(clyde)
+    if (blinky.isLive) {
+      ghosts.push(blinky)
+    }
+    if (pinky.isLive) {
+      ghosts.push(pinky)
+    }
+    if (inky.isLive) {
+      ghosts.push(inky)
+    }
+    if (clyde.isLive) {
+      ghosts.push(clyde)
+    }
+  }
+  
   function togglePowerPelletVisibility() {
     for (const pellet of pallets) {
       pellet.isVisible = !pellet.isVisible;
     }
   }
-  
+
+  init();
+
   setInterval(togglePowerPelletVisibility, 500);
 
   function loop() {
@@ -542,6 +589,13 @@ const size = random(10, 20)
       window.requestAnimationFrame(loop);
     }
   }
+
+  window.addEventListener('resize', function() {
+    width = canvas.width = window.innerWidth - 3;
+    height = canvas.height = window.innerHeight - 4;
+  
+    init();
+  })
 
   addEventListener("load", loop);
     </script>
