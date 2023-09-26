@@ -32,47 +32,25 @@ const KEY_arrowRight = 39;
 
 window.addEventListener("devicemotion", handleDeviceMotion);
 
-let touchStartX = null;
-let touchStartY = null;
-let touchEndX = null;
-let touchEndY = null;
+function handleDeviceMotion(event) {
+  const accelerationX = event.accelerationIncludingGravity.x;
+  const accelerationY = event.accelerationIncludingGravity.y;
 
-canvas.addEventListener("touchstart", function (event) {
-  touchStartX = event.touches[0].clientX;
-  touchStartY = event.touches[0].clientY;
-});
+  const sensitivity = 0.1;
 
-canvas.addEventListener("touchend", function (event) {
-  if (touchStartX !== null && touchStartY !== null) {
-    touchEndX = event.changedTouches[0].clientX;
-    touchEndY = event.changedTouches[0].clientY;
-    
-    handleTouchInput();
-    
-    touchStartX = null;
-    touchStartY = null;
-    touchEndX = null;
-    touchEndY = null;
-  }
-});
-
-function handleTouchInput() {
-  const deltaX = touchEndX - touchStartX;
-  const deltaY = touchEndY - touchStartY;
-
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    if (deltaX > 0) {
+  if (Math.abs(accelerationX) > Math.abs(accelerationY)) {
+    if (accelerationX > sensitivity) {
       pack_madur.velX = 4;
       pack_madur.velY = 0;
-    } else {
+    } else if (accelerationX < -sensitivity) {
       pack_madur.velX = -4;
       pack_madur.velY = 0;
     }
   } else {
-    if (deltaY > 0) {
+    if (accelerationY > sensitivity) {
       pack_madur.velX = 0;
       pack_madur.velY = 4;
-    } else {
+    } else if (accelerationY < -sensitivity) {
       pack_madur.velX = 0;
       pack_madur.velY = -4;
     }
@@ -177,11 +155,10 @@ function random(min, max) {
     }, 5000);
   }
 
-  function over() {
-    console.log("reloading in 5 sek");
+  function over(time) {
     setTimeout(() => {
       location.reload();
-    }, 5000);
+    }, time);
   }
 
   function toggleFullScreen(){
@@ -343,7 +320,10 @@ function random(min, max) {
       this.pack_score = 0;
       this.sound = new Audio();
       this.sound.src = 'roblox-death.mp3';
-
+      this.sigur = new Audio();
+      this.sigur.src = 'we-are-the-champions.mp3';
+      this.lose = new Audio();
+      this.lose.src = 'wah-wah.mp3';
     }
     draw() {
       ctx.beginPath();
@@ -601,12 +581,14 @@ function random(min, max) {
       ctx.fillStyle = 'yellow';
       ctx.font = '40px Arial';
       ctx.fillText('YOU WIN!!', width / 2, height / 2)
-      over();
+      pack_madur.sigur.play();
+      over(200000);
     } else if (pack_madur.pack_man_lif === 0) {
       ctx.fillStyle = 'red';
       ctx.font = '40px Arial';
       ctx.fillText('Game Over', width / 2, height / 2);
-      over();
+      pack_madur.lose.play();
+      over(5000);
     }
     else {
       window.requestAnimationFrame(loop);
@@ -623,7 +605,7 @@ function random(min, max) {
   window.addEventListener("load", loop);
 
   window.addEventListener('fullscreenchange',()=>{
-    screen.orientation.lock('landscape-primary');
+    screen.orientation.lock('landscape-primary')
   });
     </script>
 </body>
