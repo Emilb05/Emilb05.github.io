@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="EBH">
+    <title>Shopping list</title>
+    <!--<link rel="stylesheet" href="fun.css">-->
+    <link rel="icon" type="image/svg" href="banani.ico">
+    <style>
+        body {
+            background-color: #2f4e3c;
+            font-family: 'Oswald', 'Futura', sans-serif;
+            margin: 0; 
+            padding: 0;
+            color: white;
+            text-align: center;
+        }
+          
+        #page {
+        background-color: #16434e;
+        margin: 0 auto 0 auto;
+        max-width: 800px;
+        border-radius: 10px;
+    }
+        #list{
+            color: #fff;
+            background-position: right, center;
+            background-repeat: no-repeat;
+            list-style-type: none;
+            padding-right: 36px;}
+    </style>
+</head>
+<body>
+    <div id="page">
+    <h1>The shoppig list</h1>
+      <h2><span id="counter">Total = 0</span></h2>
+      <form id="addItemForm">
+        <input type="text" id="texti" required placeholder="New item"><br>
+        <input type="number" id="verd" required min="0" placeholder="Prize"><br>
+        <button type="submit">Add item</button>
+      </form>
+      <br>
+      <ul id="list">
+        <li>None</li>
+      </ul>
+      <button type="submit" id="rem">Remove all</button>
+    </div>
+    <script>
+        let shoppingList = {
+        items: [],
+        total: 0,
+        };
+
+        const addItemForm = document.querySelector("#addItemForm");
+        const list = document.querySelector("#list");
+        const counter = document.querySelector("#counter");
+        const removeAllButton = document.querySelector("#rem");
+        const storedShoppingList = localStorage.getItem("shoppingList");
+
+        if (storedShoppingList) {
+        shoppingList = JSON.parse(storedShoppingList);
+        }
+
+        updateList();
+
+        addItemForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const newItem = document.querySelector("#texti").value.trim();
+        const newPrice = parseFloat(document.querySelector("#verd").value);
+
+        if (newItem && !isNaN(newPrice) && newPrice >= 0) {
+            shoppingList.items.push({ name: newItem, price: newPrice });
+            updateList();
+            document.querySelector("#texti").value = "";
+            document.querySelector("#verd").value = "";
+
+            localStorage.setItem("shoppingList", JSON.stringify(shoppingList));
+        }
+        });
+
+        removeAllButton.addEventListener("click", () => {
+        shoppingList.items = [];
+        updateList();
+
+        localStorage.removeItem("shoppingList");
+        });
+
+        function updateList() {
+        list.innerHTML = "";
+
+        if (shoppingList.items.length === 0) {
+            const listItem = document.createElement("li");
+            listItem.textContent = "None";
+            list.appendChild(listItem);
+        } else {
+            for (let i = 0; i < shoppingList.items.length; i++) {
+            const item = shoppingList.items[i];
+            const listItem = document.createElement("li");
+            listItem.textContent = `name: ${item.name}, Prize: ${item.price}    `;
+
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", () => {
+                shoppingList.items.splice(i, 1);
+                updateList();
+                
+                localStorage.setItem("shoppingList", JSON.stringify(shoppingList));
+            });
+            listItem.appendChild(removeButton);
+
+            list.appendChild(listItem);
+            }
+        }
+
+        shoppingList.total = listTotal(shoppingList);
+        counter.textContent = `Total = ${shoppingList.total}`;
+        }
+
+        function listTotal(list) {
+        let total = 0;
+        for (let x = 0; x < list.items.length; x++) {
+            total += list.items[x].price;
+        }
+        return total;
+        }
+    </script>
+</body>
+</html>
