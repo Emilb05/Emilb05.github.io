@@ -1,0 +1,74 @@
+{
+    "events": [
+      {
+        "name": "Icelandic Music Festival",
+        "prize": "25.000kr",
+        "date": "2023-12-20",
+        "location": "Reykjavik, Iceland",
+        "image_link": "music_festival.jpg"
+      },
+      {
+        "name": "Northern Lights Expedition",
+        "prize": "20.000kr",
+        "date": "2023-11-15",
+        "location": "Akureyri, Iceland",
+        "image_link": "northern_lights.jpg"
+      },
+      {
+        "name": "Viking Heritage Conference",
+        "prize": "18.000kr",
+        "date": "2024-05-25",
+        "location": "Hafnarfjörður, Iceland",
+        "image_link": "viking.jpg"
+      },
+      {
+        "name": "Glacier Hiking Adventure",
+        "prize": "30.000kr",
+        "date": "2024-01-25",
+        "location": "Skaftafell, Iceland",
+        "image_link": "glacier.jpg"
+      },
+      {
+        "name": "Blue Lagoon Wellness Retreat",
+        "prize": "22.000kr",
+        "date": "2024-03-15",
+        "location": "Grindavík, Iceland",
+        "image_link": "blue_lagoon.jpg"
+      },
+      {
+        "name": "Geothermal Springs Seminar",
+        "prize": "15.000kr",
+        "date": "2024-02-28",
+        "location": "Hveragerði, Iceland",
+        "image_link": "geothermal_springs.jpg"
+      },
+      {
+        "name": "Whale Watching Expedition",
+        "prize": "19.000kr",
+        "date": "2024-06-30",
+        "location": "Húsavík, Iceland",
+        "image_link": "whale.jpg"
+      },
+      {
+        "name": "Golden Circle Adventure",
+        "prize": "28.000kr",
+        "date": "2024-07-05",
+        "location": "Thingvellir, Iceland",
+        "image_link": "golden_circle.jpg"
+      },
+      {
+        "name": "Volcano Exploration Camp",
+        "prize": "26.000kr",
+        "date": "2024-04-20",
+        "location": "Vestmannaeyjar, Iceland",
+        "image_link": "volcano.jpg"
+      },
+      {
+        "name": "Midnight Sun Photography Workshop",
+        "prize": "32.000kr",
+        "date": "2023-10-10",
+        "location": "Akranes, Iceland",
+        "image_link": "midnight_sun.jpg"
+      }
+    ]
+  }
