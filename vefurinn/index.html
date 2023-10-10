@@ -100,10 +100,10 @@
 <body>
     <header id="head-top">
         <div id="eachDiv">
-            Byrjunar Dagur: <input type="date" id="startDate" placeholder="Byrjunar Dagur">
+            Start Date: <input type="date" id="startDate" placeholder="Byrjunar Dagur">
         </div>
         <div id="eachDiv">
-            Enda Dagur: <input type="date" id="endDate" placeholder="Enda Dagur">
+            End Date: <input type="date" id="endDate" placeholder="Enda Dagur">
         </div>
         <div  id="eachDiv">
             <input type="text" id="search" placeholder="Leita af viðburð...">
@@ -115,7 +115,7 @@
         </div>
     </header>
     <div id="page">
-        <div>Villa</div>
+        <div>Something went wrong</div>
     </div>
     <!--<script src="skil6.js"></script>-->
     <script>
@@ -168,8 +168,8 @@ function updatePage(events) {
             itemImage.src = event.image_link;
             itemImage.id = "images";
             itemName.textContent = event.name;
-            itemPrize.textContent = "Verð: " + event.prize;
-            itemLoc.textContent = "staðsetning: " + event.location;
+            itemPrize.textContent = "Prize: " + event.prize;
+            itemLoc.textContent = "location: " + event.location;
 
             let date1 = event.date.split("-");
             let date2 = date1.reverse();
