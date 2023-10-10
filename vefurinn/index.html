@@ -115,7 +115,8 @@ const mainPage = document.querySelector("#page");
 const slider = document.querySelector("#prize");
 const output = document.querySelector('output');
 const searchInput = document.querySelector('#search');
-const dateInput = document.querySelector('#date-picker');
+const startDateInput = document.querySelector('#startDate'); // Add this line
+const endDateInput = document.querySelector('#endDate'); // Add this line
 const jsonDataPromise = fetchText();
 let originalEvents;
 
@@ -176,14 +177,17 @@ function updatePage(events) {
 slider.addEventListener('input', function () {
     const sliderValue = parseFloat(slider.value);
     const searchQuery = searchInput.value.toLowerCase();
-    const selectedDate = dateInput.value;
+    const startDate = startDateInput.value; // Get the selected start date
+    const endDate = endDateInput.value; // Get the selected end date
     const filteredEvents = originalEvents.filter(event => {
         const prize = parsePrize(event.prize);
         const eventNameLower = event.name.toLowerCase();
+        const eventDate = event.date;
         return (
             prize <= sliderValue &&
             eventNameLower.includes(searchQuery) &&
-            (selectedDate === "" || selectedDate === event.date)
+            (startDate === "" || eventDate >= startDate) && // Check if event date is after or equal to start date
+            (endDate === "" || eventDate <= endDate) // Check if event date is before or equal to end date
         );
     });
     updatePage(filteredEvents);
@@ -193,30 +197,55 @@ slider.addEventListener('input', function () {
 searchInput.addEventListener('input', function () {
     const sliderValue = parseFloat(slider.value);
     const searchQuery = searchInput.value.toLowerCase();
-    const selectedDate = dateInput.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
     const filteredEvents = originalEvents.filter(event => {
         const prize = parsePrize(event.prize);
         const eventNameLower = event.name.toLowerCase();
+        const eventDate = event.date;
         return (
             prize <= sliderValue &&
             eventNameLower.includes(searchQuery) &&
-            (selectedDate === "" || selectedDate === event.date)
+            (startDate === "" || eventDate >= startDate) &&
+            (endDate === "" || eventDate <= endDate)
         );
     });
     updatePage(filteredEvents);
 });
 
-dateInput.addEventListener('change', function () {
+startDateInput.addEventListener('input', function () {
     const sliderValue = parseFloat(slider.value);
     const searchQuery = searchInput.value.toLowerCase();
-    const selectedDate = dateInput.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
     const filteredEvents = originalEvents.filter(event => {
         const prize = parsePrize(event.prize);
         const eventNameLower = event.name.toLowerCase();
+        const eventDate = event.date;
         return (
             prize <= sliderValue &&
             eventNameLower.includes(searchQuery) &&
-            (selectedDate === "" || selectedDate === event.date)
+            (startDate === "" || eventDate >= startDate) &&
+            (endDate === "" || eventDate <= endDate)
+        );
+    });
+    updatePage(filteredEvents);
+});
+
+endDateInput.addEventListener('input', function () {
+    const sliderValue = parseFloat(slider.value);
+    const searchQuery = searchInput.value.toLowerCase();
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const filteredEvents = originalEvents.filter(event => {
+        const prize = parsePrize(event.prize);
+        const eventNameLower = event.name.toLowerCase();
+        const eventDate = event.date;
+        return (
+            prize <= sliderValue &&
+            eventNameLower.includes(searchQuery) &&
+            (startDate === "" || eventDate >= startDate) &&
+            (endDate === "" || eventDate <= endDate)
         );
     });
     updatePage(filteredEvents);
@@ -229,7 +258,6 @@ async function initializePage() {
 }
 
 initializePage();
-
     </script>
 </body>
 </html>
