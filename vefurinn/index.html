@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="EBH">
+    <title>Vefurinn</title>
+    <link rel="icon" type="image/svg" href="banani.ico">
+    <style>
+        body {
+    background-color: #02d790;
+    font-family: 'Oswald', 'Futura', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: white;
+    text-align: center;
+}
+
+#images {
+    width: 100px;
+    height: 100px;
+}
+
+#page {
+    display: grid;
+    grid-template-columns: 1fr;
+    color: black;
+}
+output {
+    text-align: center;
+    display: block;
+    padding-top: 15px;
+    margin-right: 25px;
+}
+#prize {
+    width: 70px;
+    margin: auto;
+}
+
+#head-top {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+@media screen and (max-width: 600px) {
+    #page {
+        grid-template-columns: 1fr;
+    }
+    #images {
+        width: 180px;
+        height: 180px;
+    }
+    #prize {
+        width: 70px;
+    }
+    #head-top {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1300px) {
+    #page {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+    #images {
+        width: 220px;
+        height: 220px;
+    }
+    #prize {
+        width: 100px;
+    }
+    #head-top {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media screen and (min-width: 1301px) {
+    #page {
+        grid-template-columns: repeat(5, minmax(250px, 1fr));
+    }
+    #images {
+        width: 250px;
+        height: 250px;
+    }
+    #prize {
+        width: 150px;
+    }
+    #head-top {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+    </style>
+</head>
+<body>
+    <header id="head-top">
+        <div>
+            <input type="date" id="date-picker">
+        </div>
+        <div id="search-container">
+            <input type="text" id="search" placeholder="Search for events...">
+        </div>
+        <div id="slider-container">
+            <label for="prize">0kr</label>
+            <input type="range" id="prize" name="prize" min="0" max="40000" />
+            <label for="prize">40.000kr</label>
+            <output></output>
+        </div>
+    </header>
+    <div id="page">
+        <div>Villa</div>
+    </div>
+    <script>
+        "use strict";
+const mainPage = document.querySelector("#page");
+const slider = document.querySelector("#prize");
+const output = document.querySelector('output');
+const searchInput = document.querySelector('#search');
+const dateInput = document.querySelector('#date-picker');
+const jsonDataPromise = fetchText();
+let originalEvents;
+
+async function fetchText() {
+    const response = await fetch(new Request('skil6.json'));
+    const jsonData = await response.json();
+    originalEvents = jsonData.events;
+    return jsonData;
+}
+
+function parsePrize(prize) {
+    return parseFloat(prize.replace("kr", "").replace(",", "").replace(".", ""));
+}
+
+function updatePage(events) {
+    mainPage.innerHTML = "";
+
+    if (events.length === 0) {
+        const listItem = document.createElement("div");
+        listItem.textContent = "None";
+        mainPage.appendChild(listItem);
+    } else {
+        const sortedEvents = events.slice().sort((a, b) => {
+            const prizeA = parsePrize(a.prize);
+            const prizeB = parsePrize(b.prize);
+            return prizeA - prizeB;
+        });
+
+        for (const event of sortedEvents) {
+            const listItem = document.createElement("div");
+            const itemImage = document.createElement('img');
+            const itemName = document.createElement('H3');
+            const itemPrize = document.createElement('p');
+            const itemLoc = document.createElement('p');
+            const itemDate = document.createElement('p');
+
+            itemImage.src = event.image_link;
+            itemImage.id = "images";
+            itemName.textContent = event.name;
+            itemPrize.textContent = "Verð: " + event.prize;
+            itemLoc.textContent = "staðsetning: " + event.location;
+
+            let date1 = event.date.split("-");
+            let date2 = date1.reverse();
+            let datefixed = date2.join('-');
+            itemDate.textContent = datefixed;
+
+            listItem.append(itemImage);
+            listItem.append(itemName);
+            listItem.append(itemPrize);
+            listItem.append(itemLoc);
+            listItem.append(itemDate);
+            mainPage.appendChild(listItem);
+        }
+    }
+}
+
+slider.addEventListener('input', function () {
+    const sliderValue = parseFloat(slider.value);
+    const searchQuery = searchInput.value.toLowerCase();
+    const selectedDate = dateInput.value;
+    const filteredEvents = originalEvents.filter(event => {
+        const prize = parsePrize(event.prize);
+        const eventNameLower = event.name.toLowerCase();
+        return (
+            prize <= sliderValue &&
+            eventNameLower.includes(searchQuery) &&
+            (selectedDate === "" || selectedDate === event.date)
+        );
+    });
+    updatePage(filteredEvents);
+    output.innerHTML = slider.value;
+});
+
+searchInput.addEventListener('input', function () {
+    const sliderValue = parseFloat(slider.value);
+    const searchQuery = searchInput.value.toLowerCase();
+    const selectedDate = dateInput.value;
+    const filteredEvents = originalEvents.filter(event => {
+        const prize = parsePrize(event.prize);
+        const eventNameLower = event.name.toLowerCase();
+        return (
+            prize <= sliderValue &&
+            eventNameLower.includes(searchQuery) &&
+            (selectedDate === "" || selectedDate === event.date)
+        );
+    });
+    updatePage(filteredEvents);
+});
+
+dateInput.addEventListener('change', function () {
+    const sliderValue = parseFloat(slider.value);
+    const searchQuery = searchInput.value.toLowerCase();
+    const selectedDate = dateInput.value;
+    const filteredEvents = originalEvents.filter(event => {
+        const prize = parsePrize(event.prize);
+        const eventNameLower = event.name.toLowerCase();
+        return (
+            prize <= sliderValue &&
+            eventNameLower.includes(searchQuery) &&
+            (selectedDate === "" || selectedDate === event.date)
+        );
+    });
+    updatePage(filteredEvents);
+});
+
+async function initializePage() {
+    const jsonData = await jsonDataPromise;
+    updatePage(jsonData.events);
+    output.innerHTML = slider.value;
+}
+
+initializePage();
+
+    </script>
+</body>
+</html>
