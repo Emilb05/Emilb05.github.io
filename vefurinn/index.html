@@ -93,13 +93,16 @@ output {
 </head>
 <body>
     <header id="head-top">
-        <div>
-            <input type="date" id="date-picker">
+        <div id="eachDiv">
+            start date: <input type="date" id="startDate" placeholder="Start Date">
         </div>
-        <div id="search-container">
+        <div id="eachDiv">
+            end date: <input type="date" id="endDate" placeholder="End Date">
+        </div>
+        <div  id="eachDiv">
             <input type="text" id="search" placeholder="Search for events...">
         </div>
-        <div id="slider-container">
+        <div  id="eachDiv">
             <label for="prize">0kr</label>
             <input type="range" id="prize" name="prize" min="0" max="40000" />
             <label for="prize">40.000kr</label>
